@@ -20,7 +20,6 @@ public abstract class State {
     }
 
     public double perceiveEvidence(Evidence e) {
-        if (e.equals(Evidence.none)) return 1.0;
         if (e.equals(Evidence.two) && column != 3) return 0.9;
         if (e.equals(Evidence.two) && column == 3) return 0.1;
         if (e.equals(Evidence.one) && column != 3) return 0.1;
