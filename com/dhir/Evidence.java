@@ -1,5 +1,5 @@
 package com.dhir;
 
 public enum Evidence {
-    two, one, none
+    two, one, none, end
 }

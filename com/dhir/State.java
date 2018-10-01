@@ -18,12 +18,4 @@ public abstract class State {
     public void setProbability(double probability) {
         this.probability = probability;
     }
-
-    public double perceiveEvidence(Evidence e) {
-        if (e.equals(Evidence.two) && column != 3) return 0.9;
-        if (e.equals(Evidence.two) && column == 3) return 0.1;
-        if (e.equals(Evidence.one) && column != 3) return 0.1;
-        if (e.equals(Evidence.one) && column == 3) return 0.9;
-        return 1.0;
-    }
 }

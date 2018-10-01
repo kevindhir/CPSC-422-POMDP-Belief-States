@@ -39,9 +39,10 @@ public class Agent {
         double[][] updatedBeliefs = new double[ROWS][COLUMNS];
         for (int row = 1; row < ROWS; row++) {
             for (int col = 1; col < COLUMNS; col++) {
+                if (row == 2 && col == 2) continue;
                 State currentState = beliefStates[row][col];
                 Double updatedBelief;
-                Double evidenceProbability = currentState.perceiveEvidence(evidence);
+                Double evidenceProbability = perceiveEvidence(evidence, currentState, col);
                 switch (action) {
                     case up:
                         updatedBelief = actionUp(row, col);
@@ -61,6 +62,17 @@ public class Agent {
             }
         }
         updateBeliefStates(updatedBeliefs);
+    }
+
+    private double perceiveEvidence(Evidence e, State currentState, int column) {
+        if (currentState.getClass().isInstance(TerminalState.class) && e.equals(Evidence.end)) return 1.0;
+        if (currentState.getClass().isInstance(TerminalState.class)) return 0;
+        if (e.equals(Evidence.two) && column != 3) return 0.9;
+        if (e.equals(Evidence.two) && column == 3) return 0.1;
+        if (e.equals(Evidence.one) && column != 3) return 0.1;
+        if (e.equals(Evidence.one) && column == 3) return 0.9;
+        return 1.0;
+
     }
 
     private void normalize(double[][] beliefs) {
@@ -159,24 +171,36 @@ public class Agent {
         if (row - 1 > 0) {
             output += EXPECTED_ACTION * beliefStates[row - 1][col].getProbability();
         }
+        if (col + 1 < 5) {
+            output += UNEXPECTED_ACTION * beliefStates[row][col + 1].getProbability();
+        }
+        if (col - 1 > 0) {
+            output += UNEXPECTED_ACTION * beliefStates[row][col - 1].getProbability();
+        }
         return output;
     }
 
     private double actionDown(int row, int col) {
-        double out = 0.00;
-        if (row + 1 < 4) {
-            out += EXPECTED_ACTION * beliefStates[row + 1][col].getProbability();
+        double output = 0.00;
+        if (row + 1 < 4) { //Down from above
+            output += EXPECTED_ACTION * beliefStates[row + 1][col].getProbability();
         }
-        if ((col == 1 || col == 3) && row == 2) {
-            out += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
+        if (row == 1) { //Hit bottom wall
+            output += EXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (col == 1 || col == 4) {
-            out += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
+        if (row == 2 && (col == 1 || col == 3)) { //Hit 2 2 wall by going L or R
+            output += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (row == 1) {
-            out += EXPECTED_ACTION * beliefStates[row][col].getProbability();
+        if (col == 1 || col == 4) { //Hit L or R wall
+            output += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        return out;
+        if (col + 1 < 5) { //Left from right
+            output += UNEXPECTED_ACTION * beliefStates[row][col + 1].getProbability();
+        }
+        if (col - 1 > 0) { //Right from left
+            output += UNEXPECTED_ACTION * beliefStates[row][col - 1].getProbability();
+        }
+        return output;
     }
 
     public void printBeliefState() {
