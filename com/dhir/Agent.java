@@ -65,8 +65,8 @@ public class Agent {
     }
 
     private double perceiveEvidence(Evidence e, State currentState, int column) {
-        if (currentState.getClass().isInstance(TerminalState.class) && e.equals(Evidence.end)) return 1.0;
-        if (currentState.getClass().isInstance(TerminalState.class)) return 0;
+        if (currentState instanceof TerminalState && e.equals(Evidence.end)) return 1.0;
+        if (currentState instanceof TerminalState) return 0.0;
         if (e.equals(Evidence.two) && column != 3) return 0.9;
         if (e.equals(Evidence.two) && column == 3) return 0.1;
         if (e.equals(Evidence.one) && column != 3) return 0.1;
@@ -108,25 +108,25 @@ public class Agent {
 
     private double actionLeft(int row, int col) {
         double output = 0.00;
-        if (col + 1 < 5) {
+        if (col + 1 < 5) { //Left from right
             output += EXPECTED_ACTION * beliefStates[row][col + 1].getProbability();
         }
-        if (col == 1) {
+        if (col == 1) { //Hit left wall
             output += EXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (col == 2) {
+        if (col == 2) { //Hit 2-2 wall
             output += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (row == 1 || row == 3) {
+        if (row == 1 || row == 3) { //Hit top or bottom wall
             output += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (row + 1 < 4) {
+        if (row + 1 < 4) { //Down from above
             output += UNEXPECTED_ACTION * beliefStates[row + 1][col].getProbability();
         }
-        if (row - 1 > 0) {
+        if (row - 1 > 0) { //Up from below
             output += UNEXPECTED_ACTION * beliefStates[row - 1][col].getProbability();
         }
-        if (row == 2 && col == 3) {
+        if (row == 2 && col == 3) { //Hit 2-2 wall
             output += EXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
         return output;
@@ -134,22 +134,22 @@ public class Agent {
 
     private double actionRight(int row, int col) {
         double output = 0.00;
-        if (col == 4) {
+        if (col == 4) { //Hit right wall
             output += EXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (col - 1 > 0) {
+        if (col - 1 > 0) { //Right from left
             output += EXPECTED_ACTION * beliefStates[row][col - 1].getProbability();
         }
-        if (col == 1 && row == 2) {
+        if (col == 1 && row == 2) { //Hit 2-2 wall
             output += EXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (row - 1 > 0) {
+        if (row - 1 > 0) { //Up from below
             output += UNEXPECTED_ACTION * beliefStates[row - 1][col].getProbability();
         }
-        if (row + 1 < 4) {
+        if (row + 1 < 4) { //Down from above
             output += UNEXPECTED_ACTION * beliefStates[row + 1][col].getProbability();
         }
-        if (row == 1 || row == 3) {
+        if (row == 1 || row == 3) { //Hit top or bottom
             output += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
         return output;
@@ -157,24 +157,24 @@ public class Agent {
 
     private double actionUp(int row, int col) {
         double output = 0.00;
-        if (row == 3) {
+        if (row == 3) { //Hit top wall
             output += EXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (row == 1 && col == 2) {
+        if (row == 1 && col == 2) { //Hit 2-2 wall
             output += EXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (row == 2 && col == 1 || row == 2 && col == 3) {
+        if (row == 2 && col == 1 || row == 2 && col == 3) { //Hit 2-2 wall
             output += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
-        } else if (col == 1 || col == 4) {
+        } else if (col == 1 || col == 4) { //Hit L or R wall
             output += UNEXPECTED_ACTION * beliefStates[row][col].getProbability();
         }
-        if (row - 1 > 0) {
+        if (row - 1 > 0) { //Up from below
             output += EXPECTED_ACTION * beliefStates[row - 1][col].getProbability();
         }
-        if (col + 1 < 5) {
+        if (col + 1 < 5) { //Left from right
             output += UNEXPECTED_ACTION * beliefStates[row][col + 1].getProbability();
         }
-        if (col - 1 > 0) {
+        if (col - 1 > 0) { //Right from left
             output += UNEXPECTED_ACTION * beliefStates[row][col - 1].getProbability();
         }
         return output;
