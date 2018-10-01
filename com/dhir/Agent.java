@@ -66,6 +66,7 @@ public class Agent {
 
     private double perceiveEvidence(Evidence e, State currentState, int column) {
         if (currentState instanceof TerminalState && e.equals(Evidence.end)) return 1.0;
+        if (!(currentState instanceof TerminalState) && e.equals(Evidence.end)) return 0.0;
         if (currentState instanceof TerminalState) return 0.0;
         if (e.equals(Evidence.two) && column != 3) return 0.9;
         if (e.equals(Evidence.two) && column == 3) return 0.1;
@@ -211,7 +212,7 @@ public class Agent {
             for (int j = 1; j < 5; j++) {
                 String belief = df.format(beliefStates[i][j].getProbability());
                 System.out.print(String.format("(row %d, col %d) %s", i, j, belief));
-                System.out.print("\t \t");
+                System.out.print("\t");
                 total += beliefStates[i][j].getProbability();
             }
             System.out.println();
